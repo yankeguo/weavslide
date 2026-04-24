@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "weavslide"
-version = "0.1.0"
+dynamic = ["version"]
 description = "自动生成讲座展示和 AI 配音的工具"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -39,6 +39,9 @@ dev = [
     "ruff>=0.15.11",
     "ty>=0.0.32",
 ]
+
+[tool.hatch.version]
+path = "src/weavslide/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/weavslide"]

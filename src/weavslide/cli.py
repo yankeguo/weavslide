@@ -55,7 +55,9 @@ def _load_css(args: argparse.Namespace) -> str:
     """Load CSS from --css argument, or fall back to the built-in style.css."""
     if args.css:
         return Path(args.css).read_text(encoding="utf-8")
-    return _resource_files("weavslide").joinpath("style.css").read_text(encoding="utf-8")
+    return (
+        _resource_files("weavslide").joinpath("style.css").read_text(encoding="utf-8")
+    )
 
 
 def cmd_preview(args: argparse.Namespace) -> None:
