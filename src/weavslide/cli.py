@@ -2,6 +2,7 @@
 
 import argparse
 import sys
+from importlib.resources import files as _resource_files
 from pathlib import Path
 
 from weavslide import __version__
@@ -50,6 +51,79 @@ def cmd_validate(args: argparse.Namespace) -> None:
         sys.exit(1)
 
 
+def _load_css(args: argparse.Namespace) -> str:
+    """Load CSS from --css argument, or fall back to the built-in style.css."""
+    if args.css:
+        return Path(args.css).read_text(encoding="utf-8")
+    return _resource_files("weavslide").joinpath("style.css").read_text(encoding="utf-8")
+
+
+def cmd_preview(args: argparse.Namespace) -> None:
+    """Assemble all .slide.html files into a single preview and open in browser."""
+    import tempfile
+    import webbrowser
+
+    files = args.files
+    if not files:
+        files = sorted(Path.cwd().glob("*.slide.html"))
+        if not files:
+            print("没有找到 .slide.html 文件", file=sys.stderr)
+            sys.exit(0)
+
+    slides_html_parts: list[str] = []
+    for filepath in files:
+        if isinstance(filepath, str):
+            filepath = Path(filepath)
+        result = parse_slide_file(filepath)
+        if not result.is_valid:
+            print(f"跳过无效文件: {filepath.relative_to(Path.cwd())}", file=sys.stderr)
+            continue
+        slides_html_parts.append(result.slide_html)
+
+    if not slides_html_parts:
+        print("没有有效的 slide 内容", file=sys.stderr)
+        sys.exit(1)
+
+    pages = ""
+    for i, slide_html in enumerate(slides_html_parts, 1):
+        pages += f"""\
+    <section class="page">
+      <div class="slide">
+        {slide_html}
+      </div>
+      <span class="pageno">{i}</span>
+    </section>
+"""
+
+    css = _load_css(args)
+
+    html = f"""\
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Slides Preview</title>
+<style>
+{css}
+</style>
+</head>
+<body>
+{pages}
+</body>
+</html>"""
+
+    # Write to a temp file and open it
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".html", delete=False, encoding="utf-8"
+    ) as f:
+        f.write(html)
+        tmp_path = Path(f.name)
+
+    webbrowser.open(f"file://{tmp_path}")
+    print(f"已生成预览并打开: {tmp_path}", file=sys.stderr)
+
+
 def cmd_build(args: argparse.Namespace) -> None:
     print("build: not implemented yet")
 
@@ -76,7 +150,25 @@ def main() -> None:
     )
     validate_parser.set_defaults(func=cmd_validate)
 
+    preview_parser = subparsers.add_parser("preview", help="预览讲座展示")
+    preview_parser.add_argument(
+        "files",
+        nargs="*",
+        help="要预览的 .slide.html 文件（不指定则扫描当前目录）",
+    )
+    preview_parser.add_argument(
+        "--css",
+        default=None,
+        help="自定义 CSS 文件路径（默认使用内置 style.css）",
+    )
+    preview_parser.set_defaults(func=cmd_preview)
+
     build_parser = subparsers.add_parser("build", help="构建讲座展示")
+    build_parser.add_argument(
+        "--css",
+        default=None,
+        help="自定义 CSS 文件路径（默认使用内置 style.css）",
+    )
     build_parser.set_defaults(func=cmd_build)
 
     args = parser.parse_args()

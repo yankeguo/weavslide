@@ -42,3 +42,4 @@ dev = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/weavslide"]
+include = ["src/weavslide/**/*.css"]
