@@ -38,5 +38,8 @@ htmlcov/
 # Claude
 .claude/
 
+# Example / scratch
+/example/
+
 # Test HTML outputs
 /*.html

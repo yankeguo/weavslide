@@ -1,10 +1,11 @@
-/* ═══════════════════════════════════════════════════════════════════════════
-   weavslide — Built-in Style
-   ═══════════════════════════════════════════════════════════════════════════ */
-
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }}</title>
+<style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-/* ── Screen Layout ──────────────────────────────────────────────────────── */
 
 html {
   scroll-snap-type: y mandatory;
@@ -28,8 +29,6 @@ body {
   padding: 24px;
 }
 
-/* ── Slide Card ─────────────────────────────────────────────────────────── */
-
 .slide {
   width: 90vw;
   max-width: 1280px;
@@ -46,7 +45,6 @@ body {
   position: relative;
 }
 
-/* Top accent bar */
 .slide::before {
   content: "";
   position: absolute;
@@ -56,7 +54,6 @@ body {
   border-radius: 12px 12px 0 0;
 }
 
-/* Subtle decorative element — top-right glow */
 .slide::after {
   content: "";
   position: absolute;
@@ -66,8 +63,6 @@ body {
   border-radius: 50%;
   pointer-events: none;
 }
-
-/* ── Typography ─────────────────────────────────────────────────────────── */
 
 .slide h1 {
   font-size: 2.4em;
@@ -113,8 +108,6 @@ body {
   color: #667eea;
 }
 
-/* ── Inline Semantics ───────────────────────────────────────────────────── */
-
 .slide strong {
   color: #e94560;
   font-weight: 700;
@@ -138,8 +131,6 @@ body {
   color: #888;
 }
 
-/* ── Blockquote ─────────────────────────────────────────────────────────── */
-
 .slide blockquote {
   margin: .4em 0 .6em;
   padding: .4em 0 .4em 1em;
@@ -152,8 +143,6 @@ body {
 }
 
 .slide blockquote p { margin-bottom: 0; }
-
-/* ── Code ───────────────────────────────────────────────────────────────── */
 
 .slide code {
   font-family: "SF Mono", "Fira Code", "Cascadia Code", "JetBrains Mono",
@@ -186,15 +175,11 @@ body {
   border-radius: 0;
 }
 
-/* ── Horizontal Rule ────────────────────────────────────────────────────── */
-
 .slide hr {
   border: none;
   border-top: 1px solid rgba(102, 126, 234, .18);
   margin: .6em 0;
 }
-
-/* ── Tables ─────────────────────────────────────────────────────────────── */
 
 .slide table {
   width: 100%;
@@ -220,8 +205,6 @@ body {
   background: rgba(102, 126, 234, .03);
 }
 
-/* ── Images ─────────────────────────────────────────────────────────────── */
-
 .slide img {
   max-width: 100%;
   max-height: 60vh;
@@ -229,8 +212,6 @@ body {
   display: block;
   margin: .5em auto;
 }
-
-/* ── Mermaid Diagrams ───────────────────────────────────────────────────── */
 
 .slide .mermaid {
   display: flex;
@@ -244,8 +225,6 @@ body {
   max-height: 55vh;
 }
 
-/* ── Page Number ────────────────────────────────────────────────────────── */
-
 .pageno {
   position: absolute;
   bottom: 18px;
@@ -256,8 +235,6 @@ body {
   font-family: "SF Mono", "Fira Code", monospace;
   pointer-events: none;
 }
-
-/* ── Utility Classes ────────────────────────────────────────────────────── */
 
 .slide .subtitle { font-size: 1.1em; color: #666; }
 .slide .author   { margin-top: .8em; color: #888; }
@@ -270,8 +247,6 @@ body {
   margin-top: auto;
   padding-top: 1em;
 }
-
-/* ── Print / PDF Export ─────────────────────────────────────────────────── */
 
 @media print {
   @page {
@@ -314,8 +289,6 @@ body {
   .pageno { display: none; }
 }
 
-/* ── Responsive: smaller screens keep aspect ratio via width clamping ───── */
-
 @media (max-width: 800px) {
   .slide {
     width: 98vw;
@@ -327,3 +300,37 @@ body {
   .slide h2 { font-size: 1.2em; }
   .slide pre { font-size: .7em; padding: 12px 14px; }
 }
+</style>
+</head>
+<body>
+{% for slide in slides %}
+<section class="page">
+  <div class="slide">
+    {{ slide.content }}
+  </div>
+  <span class="pageno">{{ slide.number }}</span>
+</section>
+{% endfor %}
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+{% raw -%}
+(function() {
+  var preBlocks = document.querySelectorAll('.slide pre code');
+  preBlocks.forEach(function(code) {
+    var text = (code.textContent || '').trim();
+    var firstLine = text.split('\n')[0].trim();
+    var keywords = /^(graph|sequenceDiagram|classDiagram|stateDiagram|erDiagram|journey|gantt|pie|flowchart|quadrantChart|requirementDiagram|gitGraph|mindmap|timeline|sankey|xychart|block)\b/;
+    if (keywords.test(firstLine)) {
+      var pre = code.parentElement;
+      var div = document.createElement('div');
+      div.className = 'mermaid';
+      div.textContent = text;
+      pre.parentNode.replaceChild(div, pre);
+    }
+  });
+  mermaid.initialize({ startOnLoad: true, theme: 'default', themeVariables: { fontSize: '16px' } });
+})();
+{%- endraw %}
+</script>
+</body>
+</html>
