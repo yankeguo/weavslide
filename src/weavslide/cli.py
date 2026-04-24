@@ -66,10 +66,8 @@ def _load_template(args: argparse.Namespace) -> jinja2.Template:
     return jinja2.Environment(autoescape=False).from_string(source)
 
 
-def cmd_preview(args: argparse.Namespace) -> None:
-    """Assemble all .slide.html files into a single preview and open in browser."""
-    import tempfile
-    import webbrowser
+def cmd_build(args: argparse.Namespace) -> None:
+    """Assemble all .slide.html files into slides.html."""
 
     files = args.files
     if not files:
@@ -93,21 +91,11 @@ def cmd_preview(args: argparse.Namespace) -> None:
         sys.exit(1)
 
     template = _load_template(args)
-    html = template.render(title="Slides Preview", slides=slides)
+    html = template.render(title="Slides", slides=slides)
 
-    # Write to a temp file and open it
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".html", delete=False, encoding="utf-8"
-    ) as f:
-        f.write(html)
-        tmp_path = Path(f.name)
-
-    webbrowser.open(f"file://{tmp_path}")
-    print(f"已生成预览并打开: {tmp_path}", file=sys.stderr)
-
-
-def cmd_build(args: argparse.Namespace) -> None:
-    print("build: not implemented yet")
+    output = Path.cwd() / "slides.html"
+    output.write_text(html, encoding="utf-8")
+    print(f"已生成 {output} ({len(slides)} 页)", file=sys.stderr)
 
 
 def main() -> None:
@@ -132,20 +120,12 @@ def main() -> None:
     )
     validate_parser.set_defaults(func=cmd_validate)
 
-    preview_parser = subparsers.add_parser("preview", help="预览讲座展示")
-    preview_parser.add_argument(
+    build_parser = subparsers.add_parser("build", help="构建讲座展示")
+    build_parser.add_argument(
         "files",
         nargs="*",
-        help="要预览的 .slide.html 文件（不指定则扫描当前目录）",
+        help="要构建的 .slide.html 文件（不指定则扫描当前目录）",
     )
-    preview_parser.add_argument(
-        "--template",
-        default=None,
-        help="自定义 Jinja2 模板文件路径（默认使用内置 template.j2）",
-    )
-    preview_parser.set_defaults(func=cmd_preview)
-
-    build_parser = subparsers.add_parser("build", help="构建讲座展示")
     build_parser.add_argument(
         "--template",
         default=None,
