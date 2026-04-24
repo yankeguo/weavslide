@@ -15,10 +15,10 @@ def cmd_build(args: argparse.Namespace) -> None:
 
 
 def main() -> None:
-    """weavslide - 自动生成讲桌展示和 AI 配音的工具"""
+    """weavslide - 自动生成讲座展示和 AI 配音的工具"""
     parser = argparse.ArgumentParser(
         prog="weavslide",
-        description="自动生成讲桌展示和 AI 配音的工具",
+        description="自动生成讲座展示和 AI 配音的工具",
     )
     parser.add_argument(
         "--version",
@@ -31,7 +31,7 @@ def main() -> None:
     validate_parser = subparsers.add_parser("validate", help="验证输入文件")
     validate_parser.set_defaults(func=cmd_validate)
 
-    build_parser = subparsers.add_parser("build", help="构建讲桌展示")
+    build_parser = subparsers.add_parser("build", help="构建讲座展示")
     build_parser.set_defaults(func=cmd_build)
 
     args = parser.parse_args()
