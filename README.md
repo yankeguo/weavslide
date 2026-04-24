@@ -12,7 +12,7 @@
 
 **使用 Mermaid 图表：**
 
-将 Mermaid 代码写在 `<pre><code>` 块中，预览时会自动识别并渲染为图表：
+将 Mermaid 代码写在 `<pre><code>` 块中，构建时会自动识别并渲染为图表：
 
 ```html
 <slide>
@@ -71,16 +71,18 @@ weavslide validate
 weavslide validate slides/01-opening.slide.html slides/02-basics.slide.html
 ```
 
-### `preview` — 预览讲座展示
+### `build` — 构建讲座展示
 
-将所有 `.slide.html` 文件的 `<slide>` 内容拼成完整 HTML，用浏览器预览。
+将所有 `.slide.html` 文件的 `<slide>` 内容拼成 `slides.html`，输出到当前目录。
 
 ```bash
-weavslide preview
+weavslide build
 
 # 使用自定义模板
-weavslide preview --template my-template.j2
+weavslide build --template my-template.j2
 ```
+
+生成后用 Chrome 打开 `slides.html`，Cmd+P 打印为 PDF，纸张尺寸会自动识别为 1920×1080（16:9）。
 
 ## 许可证
 
