@@ -22,7 +22,9 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-dependencies = []
+dependencies = [
+    "beautifulsoup4>=4.14.3",
+]
 
 [project.scripts]
 weavslide = "weavslide.cli:main"
@@ -32,7 +34,11 @@ Homepage = "https://github.com/yankeguo/weavslide"
 Repository = "https://github.com/yankeguo/weavslide"
 
 [dependency-groups]
-dev = []
+dev = [
+    "pytest>=9.0.3",
+    "ruff>=0.15.11",
+    "ty>=0.0.32",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/weavslide"]
