@@ -25,7 +25,7 @@ def cmd_validate(args: argparse.Namespace) -> None:
 
     for filepath in files:
         if isinstance(filepath, str):
-            filepath = Path(filepath)
+            filepath = Path(filepath).resolve()
 
         total += 1
         result = parse_slide_file(filepath)
@@ -79,7 +79,7 @@ def cmd_build(args: argparse.Namespace) -> None:
     slides: list[dict] = []
     for filepath in files:
         if isinstance(filepath, str):
-            filepath = Path(filepath)
+            filepath = Path(filepath).resolve()
         result = parse_slide_file(filepath)
         if not result.is_valid:
             print(f"跳过无效文件: {filepath.relative_to(Path.cwd())}", file=sys.stderr)
