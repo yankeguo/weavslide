@@ -94,6 +94,7 @@ def cmd_build(args: argparse.Namespace) -> None:
     html = template.render(title="Slides", slides=slides)
 
     output = Path.cwd() / args.output
+    output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(html, encoding="utf-8")
     print(f"已生成 {output} ({len(slides)} 页)", file=sys.stderr)
 
@@ -129,8 +130,8 @@ def main() -> None:
     build_parser.add_argument(
         "-o",
         "--output",
-        default="slides.html",
-        help="输出文件路径（默认 slides.html）",
+        default="output/index.html",
+        help="输出文件路径（默认 output/index.html）",
     )
     build_parser.add_argument(
         "--template",
