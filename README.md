@@ -10,6 +10,22 @@
 
 可包含任意 HTML，用于组成最终的演示文稿页面。
 
+**使用 Mermaid 图表：**
+
+将 Mermaid 代码写在 `<pre><code>` 块中，预览时会自动识别并渲染为图表：
+
+```html
+<slide>
+  <h1>系统架构</h1>
+  <pre><code>graph LR
+      A[用户] --> B[API]
+      B --> C[数据库]
+  </code></pre>
+</slide>
+```
+
+只要 `<pre><code>` 的首行以 Mermaid 关键词开头（`graph`、`sequenceDiagram`、`flowchart` 等），就会自动转换。
+
 ### `<thoughts>` — 思路要点
 
 可包含任意 HTML，仅需存放该页幻灯片的思考要点片段。
@@ -62,8 +78,8 @@ weavslide validate slides/01-opening.slide.html slides/02-basics.slide.html
 ```bash
 weavslide preview
 
-# 使用自定义 CSS
-weavslide preview --css my-theme.css
+# 使用自定义模板
+weavslide preview --template my-template.j2
 ```
 
 ## 许可证
