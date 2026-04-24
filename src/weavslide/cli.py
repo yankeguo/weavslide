@@ -27,6 +27,9 @@ def cmd_validate(args: argparse.Namespace) -> None:
         total += 1
         result = parse_slide_file(filepath)
 
+        relpath = filepath.relative_to(Path.cwd())
+        print(f"{relpath} ... {'通过' if result.is_valid else '失败'}", file=sys.stderr)
+
         if result.is_valid:
             valid += 1
         else:
