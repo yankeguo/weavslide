@@ -34,3 +34,9 @@ htmlcov/
 # Type checking
 .mypy_cache/
 .ruff_cache/
+
+# Claude
+.claude/
+
+# Test HTML outputs
+/*.html
